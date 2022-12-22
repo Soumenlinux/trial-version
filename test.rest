@@ -1,0 +1,28 @@
+###
+
+GET http://localhost:8000/
+
+
+
+#####
+
+
+POST http://localhost:8000/
+{
+   
+"userId":4,
+"name":"soumen maity",
+"age":22,
+"email":"soumen@idreameducation.org"
+
+}
+
+
+#####
+
+DELETE http://localhost:8000/1
+
+#####
+
+PATCH http://localhost:8000/1
+
