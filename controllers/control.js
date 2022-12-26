@@ -96,3 +96,8 @@ const updateData = async (req, res) => {
 export { addData, getData, deleteData, updateData, getOneData };
 
 ///error handle and response
+
+
+
+
+///this code write by soumen@maity
