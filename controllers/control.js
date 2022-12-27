@@ -1,4 +1,5 @@
-import { getDatabase, ref, set, get, child, remove } from "firebase/database";
+
+import { getDatabase, ref, set, child, remove, get, onValue } from "firebase/database";
 
 ///add data
 const addData = async (req, res) => {
@@ -19,41 +20,84 @@ const addData = async (req, res) => {
 };
 
 /// get data
-const getData = async (req, res) => {
-  const dbRef = ref(getDatabase());
-  try {
-    const data = await get(child(dbRef, `users/`));
-    // const rawData = await data.toJSON();
-    // console.log(rawData[1].age)
+ const getData = async (req, res) => {
 
-    if (data.exists()) {
-      return res.send(data).status(200);
+
+try {
+ const dbRef = getDatabase();
+  const response= await new Promise((resolve,reject)=>{
+    try {
+      onValue(ref(dbRef,"users/"),(snapshot)=>{
+        try {
+          resolve(snapshot.val())
+        } catch (error) {
+          reject({"error":error})
+        }
+       
+      },{
+        onlyOnce:true
+      })
+    } catch (error) {
+      reject({"error":error})
     }
-    return res.send({ msg: "Not Found" }).status(404);
-  } catch (err) {
-    return res.send({ msg: "bad request.." }).send(400);
-  }
-};
+  });
 
+  
+  if(!response){
+    return res.status(404).json({"msg":"not found"})
+}
+else if(typeof response == "object" && response["error"]!= undefined){
+  return res.status(400).json({"msg":"bad request"})
+}
+return res.send(response).status(200)
+
+}
+ catch (error) {
+  return res.status(500).json({"msg":"internal server error"})
+}
+
+}
+  
 ////getspecificdata
 
 const getOneData = async (req, res) => {
   const userId = req.params.id;
-  const dbRef = ref(getDatabase());
+
   try {
-    const data = await get(child(dbRef, `users/${userId}/`));
+    const dbRef = getDatabase();
+     const response= await new Promise((resolve,reject)=>{
+       try {
+         onValue(ref(dbRef,`users/${userId}`),(snapshot)=>{
+           try {
+             resolve(snapshot.val())
+           } catch (error) {
+             reject({"error":error})
+           }
+          
+         },{
+           onlyOnce:true
+         })
+       } catch (error) {
+         reject({"error":error})
+       }
+     });
+   
+     
+     if(!response){
+       return res.status(404).json({"msg":"not found"})
+   }
+   else if(typeof response == "object" && response["error"]!= undefined){
+     return res.status(400).json({"msg":"bad request"})
+   }
+   return res.send(response).status(200)
+   
+   }
+    catch (error) {
+     return res.status(500).json({"msg":"internal server error"})
+   }
+   
+   }
 
-    // const rawData =  await data.toJSON();
-    // console.log(rawData.email)
-
-    if (data.exists()) {
-      return res.send(data).status(200);
-    } 
-    return res.send({ msg: "Not Found" }).status(404);
-  } catch (error) {
-    return res.send({ msg: "Bad request" }).status(400);
-  }
-};
 
 ////deleted specific data
 
