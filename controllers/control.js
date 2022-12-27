@@ -27,10 +27,9 @@ const getData = async (req, res) => {
     // console.log(rawData[1].age)
 
     if (data.exists()) {
-      return res.send(data).status(201);
-    } else {
-      return res.send({ msg: "Data not available" }).status(404);
+      return res.send(data).status(200);
     }
+    return res.send({ msg: "Not Found" }).status(404);
   } catch (err) {
     return res.send({ msg: "bad request.." }).send(400);
   }
@@ -48,10 +47,9 @@ const getOneData = async (req, res) => {
     // console.log(rawData.email)
 
     if (data.exists()) {
-      return res.send(data).status(201);
-    } else {
-      return res.send({ msg: "data is not available" }).status(404);
-    }
+      return res.send(data).status(200);
+    } 
+    return res.send({ msg: "Not Found" }).status(404);
   } catch (error) {
     return res.send({ msg: "Bad request" }).status(400);
   }
@@ -67,10 +65,10 @@ const deleteData = async (req, res) => {
     if (data.exists()) {
       remove(ref(getDatabase(), `users/${userId}/`));
       return res.send({ msg: "data deleted" }).status(201);
-    } else {
-      return res.send({ msg: "data is not available" }).status(404);
     }
-  } catch (error) {
+    return res.send({ msg: "Not Found" }).status(404);
+
+  }catch (error) {
     return res.send({ msg: "Bad request" }).status(400);
   }
 };
@@ -89,9 +87,8 @@ const updateData = async (req, res) => {
         email: email,
       });
       return res.send({ msg: "updated data.." }).status(201);
-    } else {
-      return res.send({ msg: "data is not available" }).status(404);
-    }
+    } 
+    return res.send({ msg: "Not Found" }).status(404);
   } catch (err) {
     return res.send({ msg: "bad request" }).status(400);
   }
